@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{/index :: head}"></head>
+<body>
+<nav th:replace="~{/index :: navbar}"></nav>
+<div class="container">
+    <h1>Info Book</h1>
+    <a class="btn btn-primary" href="/books">Back</a>
+    <div class="card" style="width: 18rem;">
+        <img th:src="${book.image}" class="card-img-top" alt="...">
+        <div class="card-body" th:object="${book}">
+            <h5 class="card-title"><span th:text="${book.name}"></span></h5>
+            <p class="card-text" th:text="${book.description}"></p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

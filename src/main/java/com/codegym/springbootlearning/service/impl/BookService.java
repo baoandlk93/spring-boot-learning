@@ -1,8 +1,12 @@
-package com.codegym.springbootlearning.service;
+package com.codegym.springbootlearning.service.impl;
 
 import com.codegym.springbootlearning.entity.Book;
 import com.codegym.springbootlearning.repository.IBookRepository;
+import com.codegym.springbootlearning.service.IBookService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +18,8 @@ public class BookService implements IBookService {
     private final IBookRepository bookRepository;
 
     @Override
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public Page<Book> findAll(String name,Pageable pageable) {
+        return bookRepository.findByNameContainsAndIsDeletedIsFalse(name,pageable);
     }
 
     @Override
@@ -30,7 +34,10 @@ public class BookService implements IBookService {
 
     @Override
     public void deleteById(UUID id) {
-        bookRepository.deleteById(id);
+        Book book = bookRepository.findById(id).orElse(null);
+        assert book != null;
+        book.setIsDeleted(true);
+        bookRepository.save(book);
     }
 
     @Override

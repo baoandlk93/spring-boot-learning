@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="index :: head">
+
+</head>
+<body>
+<nav th:replace="index :: nav"></nav>
+<div class="container">
+    <a class="btn btn-primary" href="/authors">Back</a>
+    <div class="row">
+        <div class="col-12">
+            <h1 th:text="${author.name}"></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p th:text="${author.description}"></p>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

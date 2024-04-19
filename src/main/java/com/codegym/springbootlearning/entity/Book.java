@@ -1,5 +1,6 @@
 package com.codegym.springbootlearning.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,10 +33,9 @@ public class Book {
     private String name;
 
     @ManyToOne(targetEntity = Author.class)
+    @JsonManagedReference("book-author")
     @JoinColumn(name = "author_id",referencedColumnName = "id")
     private Author author;
-
-
     @Column(columnDefinition = "TEXT")
     private String description;
     private String image;
@@ -45,5 +45,7 @@ public class Book {
     private String publisher;
     private String year;
     private String language;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isDeleted = Boolean.FALSE;
 
 }

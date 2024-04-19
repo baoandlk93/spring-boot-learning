@@ -1,5 +1,7 @@
 package com.codegym.springbootlearning.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,8 +29,11 @@ public class Author {
     private String address;
     private String description;
     private String avatar;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isDeleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "author")
+    @JsonBackReference("author-book")
     private Set<Book> books;
 
 }

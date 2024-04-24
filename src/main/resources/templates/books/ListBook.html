@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Book Store</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.1.js"
-            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+<head th:replace="~{/index :: head}">
 </head>
 <body>
 <nav th:replace="~{/index :: navbar}"></nav>
@@ -18,7 +9,7 @@
     <div class="input-group mb-3">
         <a class="btn btn-primary" href="/books/create">Create</a>
         <div class="position-absolute top-0 end-0">
-            <form class="d-flex" role="search" th:action="@{/books/search}" method="get">
+            <form class="d-flex" role="search" method="get">
                 <input class="form-control me-2" type="search" placeholder="Search" name="name" id="searchValue"
                        aria-label="Search">
                 <button class="btn btn-outline-success" type="button" id="search">Search</button>
@@ -39,6 +30,7 @@
             <th>Publisher</th>
             <th>Year</th>
             <th>Language</th>
+            <th>Update</th>
             <th>Delete</th>
         </tr>
         </thead>
@@ -65,6 +57,38 @@
             <td th:text="${book.publisher}"></td>
             <td th:text="${book.year}"></td>
             <td th:text="${book.language}"></td>
+            <td>
+                <button class="btn btn-warning"
+                        th:data-id="${book.id}"
+                        th:data-name="${book.name}"
+                        th:data-author="${book.author.id}"
+                        th:data-description="${book.description}"
+                        th:data-image="${book.image}"
+                        th:data-price="${book.price}"
+                        th:data-quantity="${book.quantity}"
+                        th:data-category="${book.category}"
+                        th:data-publisher="${book.publisher}"
+                        th:data-year="${book.year}"
+                        th:data-language="${book.language}"
+                        data-bs-toggle="modal" data-bs-target="#editModal"
+                        onclick="editBook(
+                            this.getAttribute('data-id'),
+                            this.getAttribute('data-name'),
+                            this.getAttribute('data-author'),
+                            this.getAttribute('data-description'),
+                            this.getAttribute('data-image'),
+                            this.getAttribute('data-price'),
+                            this.getAttribute('data-quantity'),
+                            this.getAttribute('data-category'),
+                            this.getAttribute('data-publisher'),
+                            this.getAttribute('data-year'),
+                            this.getAttribute('data-language')
+                        )"
+
+                >
+                    Update
+                </button>
+            </td>
             <td>
                 <button class="btn btn-danger" th:data-id="${book.id}" th:data-name="${book.name}"
                         data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -94,11 +118,104 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-body-edit">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="updateBook">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
+
     const description = document.querySelectorAll('.description');
     description.forEach(description => {
-        description.textContent = description.textContent.slice(0, 30) + ' ...';
+        if (description.textContent.length > 50) {
+            description.textContent = description.textContent.slice(0, 50) + ' ...';
+        }
     });
+    const editBook = (id, name, author, description, image, price, quantity, category, publisher, year, language) => {
+        document.getElementById('updateBook').setAttribute('data-id', id);
+        document.getElementById('updateBook').setAttribute('data-name', name);
+        document.getElementById('updateBook').setAttribute('data-author', author);
+        document.getElementById('updateBook').setAttribute('data-description', description);
+        document.getElementById('updateBook').setAttribute('data-image', image);
+        document.getElementById('updateBook').setAttribute('data-price', price);
+        document.getElementById('updateBook').setAttribute('data-quantity', quantity);
+        document.getElementById('updateBook').setAttribute('data-category', category);
+        document.getElementById('updateBook').setAttribute('data-publisher', publisher);
+        document.getElementById('updateBook').setAttribute('data-year', year);
+        document.getElementById('updateBook').setAttribute('data-language', language);
+        document.getElementById('editModalLabel').innerText = 'Update ' + name;
+        document.getElementById('modal-body-edit').innerHTML = "" +
+            "<form id='updateForm' class=''>" +
+            "<input type='hidden' id='id' name='id' value='" + id + "'>" +
+            "<label for='name'>Name</label>" +
+            "<input class='form-control' type='text' id='name' name='name' value='" + name + "'/>" +
+            "<label for='author'>Author</label>" +
+            "<input class='form-control' type='text' id='author' name='author' value='" + author + "'/>" +
+            "<label for='description'>Description</label>" +
+            "<input class='form-control' type='text' id='description' name='description' value='" + description + "'/>" +
+            "<label for='image'>Image</label>" +
+            "<input class='form-control' type='text' id='image' name='image' value='" + image + "'/>" +
+            "<label for='price'>Price</label>" +
+            "<input class='form-control' type='text' id='price' name='price' value='" + price + "'/>" +
+            "<label for='quantity'>Quantity</label>" +
+            "<input class='form-control' type='text' id='quantity' name='quantity' value='" + quantity + "'/>" +
+            "<label for='category'>Category</label>" +
+            "<input class='form-control' type='text' id='category' name='category' value='" + category + "'/>" +
+            "<label for='publisher'>Publisher</label>" +
+            "<input class='form-control' type='text' id='publisher' name='publisher' value='" + publisher + "'/>" +
+            "<label for='year'>Year</label>" +
+            "<input class='form-control' type='text' id='year' name='year' value='" + year + "'/>" +
+            "<label for='language'>Language</label>" +
+            "<input class='form-control' type='text' id='language' name='language' value='" + language + "'/>" +
+            "<button type='submit' class='btn btn-danger' id='updateBook'>Update</button>" +
+            "</form>";
+        document.querySelector("#updateForm").addEventListener('submit', function (e) {
+            e.preventDefault();
+            const book = {
+                id: document.getElementById('id').value,
+                name: document.getElementById('name').value,
+                authorId: document.getElementById('author').value,
+                description: document.getElementById('description').value,
+                image: document.getElementById('image').value,
+                price: document.getElementById('price').value,
+                quantity: document.getElementById('quantity').value,
+                category: document.getElementById('category').value,
+                publisher: document.getElementById('publisher').value,
+                year: document.getElementById('year').value,
+                language: document.getElementById('language').value,
+            }
+            $.ajax({
+                url: `http://localhost:8080/api/books/update/${book.id}`,
+                type: "PUT",
+                data: JSON.stringify(book),
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res)
+                    if (res.status === "OK") {
+                        Swal.fire({
+                            title: "Good job!",
+                            text: "You clicked the button!",
+                            icon: "success"
+                        }).then(
+                            () => window.location.href = '/books'
+                        );
+                    }
+                }
+            })
+        })
+    }
 
     function deleteBook(id, name) {
         console.log(id, name)
@@ -131,7 +248,7 @@
                                 </a>
                             </td>
                             <td>${data[i].author.name}</td>
-                            <td>${data[i].description}</td>
+                            <td class="description">${data[i].description}</td>
                             <td><img src="${data[i].image}" width="100px" height="100px" alt=""></td>
                             <td>${data[i].price}</td>
                             <td>${data[i].quantity}</td>
@@ -139,6 +256,38 @@
                             <td>${data[i].publisher}</td>
                             <td>${data[i].year}</td>
                             <td>${data[i].language}</td>
+                             <td>
+                                <button class="btn btn-warning"
+                                        data-id="${data[i].id}"
+                                        data-name="${data[i].name}"
+                                        data-author="${data[i].author.id}"
+                                        data-description="${data[i].description}"
+                                        data-image="${data[i].image}"
+                                        data-price="${data[i].price}"
+                                        data-quantity="${data[i].quantity}"
+                                        data-category="${data[i].category}"
+                                        data-publisher="${data[i].publisher}"
+                                        data-year="${data[i].year}"
+                                        data-language="${data[i].language}"
+                                        data-bs-toggle="modal" data-bs-target="#editModal"
+                                        onclick="editBook(
+                                            this.getAttribute('data-id'),
+                                            this.getAttribute('data-name'),
+                                            this.getAttribute('data-author'),
+                                            this.getAttribute('data-description'),
+                                            this.getAttribute('data-image'),
+                                            this.getAttribute('data-price'),
+                                            this.getAttribute('data-quantity'),
+                                            this.getAttribute('data-category'),
+                                            this.getAttribute('data-publisher'),
+                                            this.getAttribute('data-year'),
+                                            this.getAttribute('data-language')
+                                        )"
+
+                >
+                    Update
+                </button>
+            </td>
                             <td>
                                 <button class="btn btn-danger" data-id="${data[i].id}" data-name="${data[i].name}"
                                         data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -150,6 +299,9 @@
                         </tr>`
                     )
                 }
+                description.forEach(description => {
+                    description.textContent = description.textContent.slice(0, 30) + ' ...';
+                });
             },
             error: function (data) {
                 console.log(data)
